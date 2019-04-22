@@ -40,6 +40,8 @@ import com.netflix.spectator.api.Registry;
 import org.quartz.SchedulerFactory;
 import org.quartz.impl.StdSchedulerFactory;
 
+import com.netflix.priam.aws.IAMCredential; //see setup instructions at https://github.com/Netflix/Priam/wiki/Setup
+
 public class PriamGuiceModule extends AbstractModule {
     @Override
     protected void configure() {
@@ -70,6 +72,8 @@ public class PriamGuiceModule extends AbstractModule {
         bind(ICredentialGeneric.class)
                 .annotatedWith(Names.named("pgpcredential"))
                 .to(PgpCredential.class);
+
+        bind(ICredential.class).to(IAMCredential.class);
         bind(IMetaProxy.class).annotatedWith(Names.named("v1")).to(MetaV1Proxy.class);
         bind(IMetaProxy.class).annotatedWith(Names.named("v2")).to(MetaV2Proxy.class);
         bind(Registry.class).toInstance(new NoopRegistry());
