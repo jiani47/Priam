@@ -18,12 +18,14 @@ package com.netflix.priam.defaultimpl;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.name.Names;
+
 import com.netflix.priam.aws.S3CrossAccountFileSystem;
 import com.netflix.priam.aws.S3EncryptedFileSystem;
 import com.netflix.priam.aws.S3FileSystem;
 import com.netflix.priam.aws.auth.EC2RoleAssumptionCredential;
 import com.netflix.priam.aws.auth.IS3Credential;
 import com.netflix.priam.aws.auth.S3RoleAssumptionCredential;
+import com.netflix.priam.aws.IAMCredential; //see setup instructions at https://github.com/Netflix/Priam/wiki/Setup
 import com.netflix.priam.backup.IBackupFileSystem;
 import com.netflix.priam.backupv2.IMetaProxy;
 import com.netflix.priam.backupv2.MetaV1Proxy;
@@ -37,10 +39,9 @@ import com.netflix.priam.google.GcsCredential;
 import com.netflix.priam.google.GoogleEncryptedFileSystem;
 import com.netflix.spectator.api.NoopRegistry;
 import com.netflix.spectator.api.Registry;
+
 import org.quartz.SchedulerFactory;
 import org.quartz.impl.StdSchedulerFactory;
-
-import com.netflix.priam.aws.IAMCredential; //see setup instructions at https://github.com/Netflix/Priam/wiki/Setup
 
 public class PriamGuiceModule extends AbstractModule {
     @Override
@@ -49,29 +50,29 @@ public class PriamGuiceModule extends AbstractModule {
 
         bind(IBackupFileSystem.class).annotatedWith(Names.named("backup")).to(S3FileSystem.class);
         bind(IBackupFileSystem.class)
-                .annotatedWith(Names.named("encryptedbackup"))
-                .to(S3EncryptedFileSystem.class);
+            .annotatedWith(Names.named("encryptedbackup"))
+            .to(S3EncryptedFileSystem.class);
 
         bind(S3CrossAccountFileSystem.class);
 
         bind(IBackupFileSystem.class)
-                .annotatedWith(Names.named("gcsencryptedbackup"))
-                .to(GoogleEncryptedFileSystem.class);
+            .annotatedWith(Names.named("gcsencryptedbackup"))
+            .to(GoogleEncryptedFileSystem.class);
         bind(IS3Credential.class)
-                .annotatedWith(Names.named("awss3roleassumption"))
-                .to(S3RoleAssumptionCredential.class);
+            .annotatedWith(Names.named("awss3roleassumption"))
+            .to(S3RoleAssumptionCredential.class);
         bind(ICredential.class)
-                .annotatedWith(Names.named("awsec2roleassumption"))
-                .to(EC2RoleAssumptionCredential.class);
+            .annotatedWith(Names.named("awsec2roleassumption"))
+            .to(EC2RoleAssumptionCredential.class);
         bind(IFileCryptography.class)
-                .annotatedWith(Names.named("filecryptoalgorithm"))
-                .to(PgpCryptography.class);
+            .annotatedWith(Names.named("filecryptoalgorithm"))
+            .to(PgpCryptography.class);
         bind(ICredentialGeneric.class)
-                .annotatedWith(Names.named("gcscredential"))
-                .to(GcsCredential.class);
+            .annotatedWith(Names.named("gcscredential"))
+            .to(GcsCredential.class);
         bind(ICredentialGeneric.class)
-                .annotatedWith(Names.named("pgpcredential"))
-                .to(PgpCredential.class);
+            .annotatedWith(Names.named("pgpcredential"))
+            .to(PgpCredential.class);
 
         bind(ICredential.class).to(IAMCredential.class);
         bind(IMetaProxy.class).annotatedWith(Names.named("v1")).to(MetaV1Proxy.class);
